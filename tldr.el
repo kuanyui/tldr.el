@@ -39,7 +39,7 @@
   "Lookup tldr in Emacs"
   (set (make-local-variable 'buffer-read-only) t))
 
-(defgroup moedict nil
+(defgroup tldr nil
   "tldr client for Emacs"
   :prefix "tldr-"
   :link '(url-link "http://github.com/kuanyui/tldr.el"))
@@ -91,9 +91,9 @@
 
 (defface tldr-command-itself
   '((((class color) (background light))
-     (:foreground "#005500" :background "#d7ff87" :bold t))
+     (:foreground "#d7ff87" :background "#008700" :bold t))
     (((class color) (background dark))
-     (:foreground "#a1db00" :background "#5a5a5a" :bold t)))
+     (:foreground "#5a5a5a" :background "#a1db00" :bold t)))
   ""
   :group 'tldr-faces)
 
@@ -156,7 +156,7 @@
                         (let ((brackets-positions (tldr-match-positions "{{\\(.+?\\)}}" line)))
                           (setq line
                                 (replace-regexp-in-string
-                                 command (propertize command 'face 'tldr-command-itself)
+                                 (concat "^" command) (propertize command 'face 'tldr-command-itself)
                                  (propertize (substring line 1 -1) 'face 'tldr-code-block)))
                           (if brackets-positions
                               (mapc (lambda (pos)
