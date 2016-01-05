@@ -151,24 +151,18 @@
                        ((string-prefix-p "> " line)
                         (propertize (concat "    " (substring line 2)) 'face 'tldr-introduction))
                        ((string-prefix-p "- " line)
-                        (propertize (substring line 2) 'face 'tldr-introduction))
+                        (propertize (substring line 2) 'face 'tldr-description))
                        ((string-prefix-p "`" line)
-                        (mapconcat (lambda (word)
-                                     (cond ((string= word command)
-                                            (propertize word 'face 'tldr-command-itself))
-                                           ((string-match "{{(.+)}}" word)
-                                            (propertize (match-string 1 word) 'face 'tldr-command-argument))
-                                           (t
-                                            (propertize word 'face 'tldr-command-itself))
-                                           ))
-                                   (split-string (substring line 1 -1) " ")
-                                   (propertize " " 'face 'tldr-code-block)))
+                        (replace-regexp-in-string
+                         "{{\\(.+?\\)}}" (propertize "\\1" 'face 'tldr-command-argument)
+                         (replace-regexp-in-string
+                          command (propertize command 'face 'tldr-command-itself)
+                          (propertize (substring line 1 -1) 'face 'tldr-code-block)
+                          )))
                        )
                  )
                lines "\n")
     ))
-
-
 
 
 (defun tldr ()
