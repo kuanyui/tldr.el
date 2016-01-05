@@ -45,7 +45,8 @@
 (defgroup tldr nil
   "tldr client for Emacs"
   :prefix "tldr-"
-  :link '(url-link "http://github.com/kuanyui/tldr.el"))
+  :link '(url-link "http://github.com/kuanyui/tldr.el")
+  :group 'help)
 
 (defgroup tldr-faces nil
   ""
