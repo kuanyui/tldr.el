@@ -153,15 +153,34 @@
                        ((string-prefix-p "- " line)
                         (propertize (substring line 2) 'face 'tldr-description))
                        ((string-prefix-p "`" line)
-                        (replace-regexp-in-string
-                         "{{\\(.+?\\)}}" "\\1"
-                         (replace-regexp-in-string
-                          command (propertize command 'face 'tldr-command-itself)
-                          (propertize (substring line 1 -1) 'face 'tldr-code-block)
-                          ))))
+                        (let ((brackets-positions (tldr-match-positions "{{\\(.+?\\)}}" line)))
+                          (setq line
+                                (replace-regexp-in-string
+                                 command (propertize command 'face 'tldr-command-itself)
+                                 (propertize (substring line 1 -1) 'face 'tldr-code-block)))
+                          (if brackets-positions
+                              (mapc (lambda (pos)
+                                      (set-text-properties (car pos) (cdr pos) '(face tldr-command-argument) line))
+                                    brackets-positions))
+                          (replace-regexp-in-string "{{\\(.+?\\)}}" "\\1" line)
+                          )))
                  )
                lines "\n")
     ))
+
+(defun tldr-match-positions (regexp str)
+  "Get all matched regexp groups positions grabbed with \\(\\)
+e.g. ((1 . 5) (8 . 10))"
+  (let ((pos 0)
+        res)
+    (while (and (string-match regexp str pos)
+                (< pos (length str) ) )
+      (let ((m (match-end 0)))
+        (push (cons (match-beginning 0) (1- m)) res)
+        (setq pos m)
+        ))
+    (nreverse res)))
+
 
 
 (defun tldr ()
