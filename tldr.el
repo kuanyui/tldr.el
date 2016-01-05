@@ -3,7 +3,7 @@
 ;; Author: Ono Hiroko <azazabc123@gmail.com>
 ;; Keywords: tools, docs
 ;; Package-Requires: ((emacs "24.3"))
-;; X-URL: http://github.com/kuanyui/fm-bookmarks.el
+;; X-URL: https://github.com/kuanyui/tldr.el
 
 ;; WTFPL 2.0
 ;; Ono Hiroko (kuanyui) (ɔ) Copyleft 2016
