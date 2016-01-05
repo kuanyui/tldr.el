@@ -12,5 +12,9 @@ I'm dealing with MELPA. Please install manually currently.
 ** Usage
 =M-x tldr=
 
+Notice that the first time using it will automatically download the latest tldr docs.
+
+You can use =M-x tldr-update-docs= to update docs.
+
 ** License
 GPL v3
