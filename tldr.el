@@ -28,12 +28,75 @@
 ;;; Code:
 
 (require 'url)
-
+(require 'cl)
 
 (defvar tldr-directory-path (concat user-emacs-directory "tldr/"))
 (defvar tldr-saved-zip-path (concat user-emacs-directory "tldr-source.zip"))
 (defvar tldr-source-zip-url "https://github.com/tldr-pages/tldr/archive/master.zip")
 (defvar tldr-pages-dir (concat tldr-directory-path "pages/"))
+
+(define-derived-mode tldr-mode nil "tldr"
+  "Lookup tldr in Emacs"
+  (set (make-local-variable 'buffer-read-only) t))
+
+(defgroup moedict nil
+  "tldr client for Emacs"
+  :prefix "tldr-"
+  :link '(url-link "http://github.com/kuanyui/tldr.el"))
+
+(defgroup tldr-faces nil
+  ""
+  :group 'tldr
+  :group 'faces)
+
+(defface tldr-title
+  '((((class color) (background light))
+     (:foreground "#ff8700" :bold t :height 1.2))
+    (((class color) (background dark))
+     (:foreground "#ffa722" :bold t :height 1.2)))
+  ""
+  :group 'tldr-faces)
+
+(defface tldr-introduction
+  '((((class color) (background light))
+     (:foreground "#525252" :italic t))
+    (((class color) (background dark))
+     (:foreground "#cdcdcd" :italic t)))
+  ""
+  :group 'tldr-faces)
+
+(defface tldr-description
+  '((((class color) (background light))
+     (:foreground "#1f5bff"))
+    (((class color) (background dark))
+     (:foreground "#6faaff")))
+  ""
+  :group 'tldr-faces)
+
+(defface tldr-code-block
+  '((((class color) (background light))
+     (:foreground "#008700" :background "#d7ff87"))
+    (((class color) (background dark))
+     (:foreground "#a1db00" :background "#5a5a5a")))
+  ""
+  :group 'tldr-faces)
+
+(defface tldr-command-argument
+  '((((class color) (background light))
+     (:foreground "#555" :background "#d7ff87"))
+    (((class color) (background dark))
+     (:foreground "#eee" :background "#5a5a5a")))
+  ""
+  :group 'tldr-faces)
+
+(defface tldr-command-itself
+  '((((class color) (background light))
+     (:foreground "#005500" :background "#d7ff87" :bold t))
+    (((class color) (background dark))
+     (:foreground "#a1db00" :background "#5a5a5a" :bold t)))
+  ""
+  :group 'tldr-faces)
+
 
 
 (defun tldr-update-docs ()
@@ -61,20 +124,66 @@
          '("common"))))
 
 (defun tldr-get-commands-list ()
+  "For `completing-read'"
   (mapcar (lambda (file.md) (substring file.md 0 -3))
           (remove-if (lambda (y) (member y '("." "..")))
                      (mapcan (lambda (x) (directory-files (concat tldr-pages-dir x)))
                              (tldr-get-system-name)))))
 
-(completing-read "tldr: "
-                 '(("a" "dir/a") ("b" "dir/b"))
-                 nil t "" nil t
+(defun tldr-get-file-path-from-command-name (command)
+  (find-if #'file-exists-p
+           (mapcar (lambda (system-name)
+                     (format "%s%s/%s.md" tldr-pages-dir system-name command))
+                   (tldr-get-system-name))))
+
+(defun tldr-render-markdown (command)
+  (let* ((file-path (tldr-get-file-path-from-command-name command))
+         (lines (split-string
+                 (with-temp-buffer
+                   (insert-file-contents (tldr-get-file-path-from-command-name 'tar))
+                   (buffer-string)) "\n")))
+
+    (mapconcat (lambda (line)
+                 (cond ((equal "" line)
+                        "")
+                       ((string-prefix-p "# " line)
+                        (propertize (substring line 2) 'face 'tldr-title))
+                       ((string-prefix-p "> " line)
+                        (propertize (concat "    " (substring line 2)) 'face 'tldr-introduction))
+                       ((string-prefix-p "- " line)
+                        (propertize (substring line 2) 'face 'tldr-introduction))
+                       ((string-prefix-p "`" line)
+                        (mapconcat (lambda (word)
+                                     (cond ((string= word command)
+                                            (propertize word 'face 'tldr-command-itself))
+                                           ((string-match "{{(.+)}}" word)
+                                            (propertize (match-string 1 word) 'face 'tldr-command-argument))
+                                           (t
+                                            (propertize word 'face 'tldr-command-itself))
+                                           ))
+                                   (split-string (substring line 1 -1) " ")
+                                   (propertize " " 'face 'tldr-code-block)))
+                       )
                  )
+               lines "\n")
+    ))
+
+
+
 
 (defun tldr ()
   "Lookup tldr docs."
   (interactive)
-  (read-from-minibuffer "command")
-  )
+  (let ((command (completing-read "tldr: " (tldr-get-commands-list) nil t "" nil t)))
+    (with-temp-buffer-window "*tldr*" nil nil)
+    (if (not (equal (buffer-name) "*tldr*"))
+        (switch-to-buffer-other-window "*tldr*"))
+    (if (not (equal major-mode 'tldr-mode))
+        (tldr-mode))
+    (let (buffer-read-only)
+      (insert (tldr-render-markdown command))
+      (goto-char (point-min)))
+    ))
+
 (provide 'tldr)
 ;;; tldr.el ends here
