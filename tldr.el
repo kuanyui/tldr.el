@@ -135,8 +135,8 @@
 
 (defun tldr-get-file-path-from-command-name (command)
   (cl-find-if #'file-exists-p
-              (mapcar (lambda (system-name)
-                        (format "%s%s/%s.md" tldr-pages-dir system-name command))
+              (mapcar (lambda (system)
+                        (format "%s%s/%s.md" tldr-pages-dir system command))
                       (tldr-get-system-name))))
 
 (defun tldr-render-markdown (command)
