@@ -1,0 +1,16 @@
+* tldr.el
+tldr client for Emacs.
+
+** Screenshot
+Elegantly good-looking(tm)!
+
+[[file:screenshot.png]]
+
+** Install
+I'm dealing with MELPA. Please install manually currently.
+
+** Usage
+=M-x tldr=
+
+** License
+GPL v3
