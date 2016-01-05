@@ -31,7 +31,7 @@
 ;;; Code:
 
 (require 'url)
-(require 'cl)
+(require 'cl-lib)
 
 (defvar tldr-directory-path (concat user-emacs-directory "tldr/"))
 (defvar tldr-saved-zip-path (concat user-emacs-directory "tldr-source.zip"))
@@ -129,15 +129,15 @@
 (defun tldr-get-commands-list ()
   "For `completing-read'"
   (mapcar (lambda (file.md) (substring file.md 0 -3))
-          (remove-if (lambda (y) (member y '("." "..")))
-                     (mapcan (lambda (x) (directory-files (concat tldr-pages-dir x)))
-                             (tldr-get-system-name)))))
+          (cl-remove-if (lambda (y) (member y '("." "..")))
+                        (cl-mapcan (lambda (x) (directory-files (concat tldr-pages-dir x)))
+                                   (tldr-get-system-name)))))
 
 (defun tldr-get-file-path-from-command-name (command)
-  (find-if #'file-exists-p
-           (mapcar (lambda (system-name)
-                     (format "%s%s/%s.md" tldr-pages-dir system-name command))
-                   (tldr-get-system-name))))
+  (cl-find-if #'file-exists-p
+              (mapcar (lambda (system-name)
+                        (format "%s%s/%s.md" tldr-pages-dir system-name command))
+                      (tldr-get-system-name))))
 
 (defun tldr-render-markdown (command)
   (let* ((file-path (tldr-get-file-path-from-command-name command))
