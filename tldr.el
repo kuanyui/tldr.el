@@ -154,12 +154,11 @@
                         (propertize (substring line 2) 'face 'tldr-description))
                        ((string-prefix-p "`" line)
                         (replace-regexp-in-string
-                         "{{\\(.+?\\)}}" (propertize "\\1" 'face 'tldr-command-argument)
+                         "{{\\(.+?\\)}}" "\\1"
                          (replace-regexp-in-string
                           command (propertize command 'face 'tldr-command-itself)
                           (propertize (substring line 1 -1) 'face 'tldr-code-block)
-                          )))
-                       )
+                          ))))
                  )
                lines "\n")
     ))
