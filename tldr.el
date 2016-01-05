@@ -101,7 +101,7 @@
   :group 'tldr-faces)
 
 
-
+;;;###autoload
 (defun tldr-update-docs ()
   "Get or update tldr docs from source."
   (interactive)
@@ -185,7 +185,7 @@ e.g. ((1 . 5) (8 . 10))"
     (nreverse res)))
 
 
-
+;;;###autoload
 (defun tldr ()
   "Lookup tldr docs."
   (interactive)
