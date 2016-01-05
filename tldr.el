@@ -1,29 +1,27 @@
 ;;; tldr.el --- tldr client for Emacs                -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2016  kuanyui
-
-;; Author: kuanyui <azazabc123@gmail.com>
+;; Author: Ono Hiroko <azazabc123@gmail.com>
 ;; Keywords: tools, docs
+;; Package-Requires: ((emacs "24.5") (cl-lib "0.5"))
+;; X-URL: http://github.com/kuanyui/fm-bookmarks.el
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+;; WTFPL 2.0
+;; Ono Hiroko (kuanyui) (ɔ) Copyleft 2016
+;;
+;; This program is free software. It comes without any warranty, to
+;; the extent permitted by applicable law. You can redistribute it
+;; and/or modify it under the terms of the Do What The Fuck You Want
+;; To Public License, Version 2, as published by Sam Hocevar. See
+;; http://www.wtfpl.net/ for more details.
 
 ;; Started at [2016-01-05 火 23:05]
 
 ;;; Commentary:
 
-;; 
+;; This is a tldr client for Emacs.
+;; https://github.com/tldr-pages/tldr
+
+;; Just M-x tldr
 
 ;;; Code:
 
