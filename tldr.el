@@ -2,7 +2,7 @@
 
 ;; Author: Ono Hiroko <azazabc123@gmail.com>
 ;; Keywords: tools, docs
-;; Package-Requires: ((emacs "24.5") (cl-lib "0.5"))
+;; Package-Requires: ((emacs "24.3"))
 ;; X-URL: http://github.com/kuanyui/fm-bookmarks.el
 
 ;; WTFPL 2.0
