@@ -1,5 +1,5 @@
 * tldr.el
-tldr client for Emacs.
+[[https://github.com/tldr-pages/tldr][tldr]] client for Emacs.
 
 ** Screenshot
 Elegantly good-looking(tm)!
