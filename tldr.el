@@ -140,7 +140,7 @@
   (let* ((file-path (tldr-get-file-path-from-command-name command))
          (lines (split-string
                  (with-temp-buffer
-                   (insert-file-contents (tldr-get-file-path-from-command-name 'tar))
+                   (insert-file-contents (tldr-get-file-path-from-command-name command))
                    (buffer-string)) "\n")))
 
     (mapconcat (lambda (line)
