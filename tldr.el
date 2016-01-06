@@ -33,25 +33,35 @@
 (require 'url)
 (require 'cl-lib)
 
-(defvar tldr-directory-path (concat user-emacs-directory "tldr/"))
-(defvar tldr-saved-zip-path (concat user-emacs-directory "tldr-source.zip"))
-(defvar tldr-source-zip-url "https://github.com/tldr-pages/tldr/archive/master.zip")
-(defvar tldr-pages-dir (concat tldr-directory-path "pages/"))
-
-(define-derived-mode tldr-mode nil "tldr"
-  "Lookup tldr in Emacs"
-  (set (make-local-variable 'buffer-read-only) t))
-
 (defgroup tldr nil
   "tldr client for Emacs"
   :prefix "tldr-"
   :link '(url-link "http://github.com/kuanyui/tldr.el")
   :group 'help)
 
-(defgroup tldr-faces nil
-  ""
+(defcustom tldr-directory-path
+  (concat user-emacs-directory "tldr/")
   :group 'tldr
-  :group 'faces)
+  :type 'string)
+
+(defcustom tldr-saved-zip-path
+  (concat user-emacs-directory "tldr-source.zip")
+  :group 'tldr
+  :type 'string)
+
+(defcustom tldr-source-zip-url
+  "https://github.com/tldr-pages/tldr/archive/master.zip"
+  :group 'tldr
+  :type 'string)
+
+(defcustom tldr-pages-dir
+  (concat tldr-directory-path "pages/")
+  :group 'tldr
+  :type 'string)
+
+(define-derived-mode tldr-mode nil "tldr"
+  "Lookup tldr in Emacs"
+  (set (make-local-variable 'buffer-read-only) t))
 
 (defface tldr-title
   '((((class color) (background light))
@@ -59,7 +69,7 @@
     (((class color) (background dark))
      (:foreground "#ffa722" :bold t :height 1.2)))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 (defface tldr-introduction
   '((((class color) (background light))
@@ -67,7 +77,7 @@
     (((class color) (background dark))
      (:foreground "#cdcdcd" :italic t)))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 (defface tldr-description
   '((((class color) (background light))
@@ -75,7 +85,7 @@
     (((class color) (background dark))
      (:foreground "#6faaff")))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 (defface tldr-code-block
   '((((class color) (background light))
@@ -83,7 +93,7 @@
     (((class color) (background dark))
      (:foreground "#a1db00" :background "#5a5a5a")))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 (defface tldr-command-argument
   '((((class color) (background light))
@@ -91,7 +101,7 @@
     (((class color) (background dark))
      (:foreground "#eee" :background "#5a5a5a")))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 (defface tldr-command-itself
   '((((class color) (background light))
@@ -99,7 +109,7 @@
     (((class color) (background dark))
      (:foreground "#5a5a5a" :background "#a1db00" :bold t)))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 
 ;;;###autoload
