@@ -4,6 +4,7 @@
 ;; Keywords: tools, docs
 ;; Package-Requires: ((emacs "24.3"))
 ;; X-URL: https://github.com/kuanyui/tldr.el
+;; Version: {{VERSION}}
 
 ;; WTFPL 2.0
 ;; Ono Hiroko (kuanyui) (ɔ) Copyleft 2016
