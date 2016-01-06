@@ -41,23 +41,25 @@
 
 (defcustom tldr-directory-path
   (concat user-emacs-directory "tldr/")
+  "The directory name of tldr."
   :group 'tldr
   :type 'string)
 
 (defcustom tldr-saved-zip-path
   (concat user-emacs-directory "tldr-source.zip")
+  "The temporary location for downloading zip"
   :group 'tldr
   :type 'string)
 
 (defcustom tldr-source-zip-url
   "https://github.com/tldr-pages/tldr/archive/master.zip"
+  "Zip URL on GitHub."
   :group 'tldr
   :type 'string)
 
-(defcustom tldr-pages-dir
-  (concat tldr-directory-path "pages/")
-  :group 'tldr
-  :type 'string)
+(defvar tldr-pages-dir (concat tldr-directory-path "pages/")
+  "Don't change me you idiot!")
+
 
 (define-derived-mode tldr-mode nil "tldr"
   "Lookup tldr in Emacs"
