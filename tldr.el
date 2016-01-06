@@ -2,8 +2,8 @@
 
 ;; Author: Ono Hiroko <azazabc123@gmail.com>
 ;; Keywords: tools, docs
-;; Package-Requires: ((emacs "24.5") (cl-lib "0.5"))
-;; X-URL: http://github.com/kuanyui/fm-bookmarks.el
+;; Package-Requires: ((emacs "24.3"))
+;; X-URL: https://github.com/kuanyui/tldr.el
 
 ;; WTFPL 2.0
 ;; Ono Hiroko (kuanyui) (ɔ) Copyleft 2016
@@ -31,7 +31,7 @@
 ;;; Code:
 
 (require 'url)
-(require 'cl)
+(require 'cl-lib)
 
 (defvar tldr-directory-path (concat user-emacs-directory "tldr/"))
 (defvar tldr-saved-zip-path (concat user-emacs-directory "tldr-source.zip"))
@@ -45,7 +45,8 @@
 (defgroup tldr nil
   "tldr client for Emacs"
   :prefix "tldr-"
-  :link '(url-link "http://github.com/kuanyui/tldr.el"))
+  :link '(url-link "http://github.com/kuanyui/tldr.el")
+  :group 'help)
 
 (defgroup tldr-faces nil
   ""
@@ -101,7 +102,7 @@
   :group 'tldr-faces)
 
 
-
+;;;###autoload
 (defun tldr-update-docs ()
   "Get or update tldr docs from source."
   (interactive)
@@ -129,21 +130,21 @@
 (defun tldr-get-commands-list ()
   "For `completing-read'"
   (mapcar (lambda (file.md) (substring file.md 0 -3))
-          (remove-if (lambda (y) (member y '("." "..")))
-                     (mapcan (lambda (x) (directory-files (concat tldr-pages-dir x)))
-                             (tldr-get-system-name)))))
+          (cl-remove-if (lambda (y) (member y '("." "..")))
+                        (cl-mapcan (lambda (x) (directory-files (concat tldr-pages-dir x)))
+                                   (tldr-get-system-name)))))
 
 (defun tldr-get-file-path-from-command-name (command)
-  (find-if #'file-exists-p
-           (mapcar (lambda (system-name)
-                     (format "%s%s/%s.md" tldr-pages-dir system-name command))
-                   (tldr-get-system-name))))
+  (cl-find-if #'file-exists-p
+              (mapcar (lambda (system)
+                        (format "%s%s/%s.md" tldr-pages-dir system command))
+                      (tldr-get-system-name))))
 
 (defun tldr-render-markdown (command)
   (let* ((file-path (tldr-get-file-path-from-command-name command))
          (lines (split-string
                  (with-temp-buffer
-                   (insert-file-contents (tldr-get-file-path-from-command-name command))
+                   (insert-file-contents file-path)
                    (buffer-string)) "\n")))
 
     (mapconcat (lambda (line)
@@ -185,7 +186,7 @@ e.g. ((1 . 5) (8 . 10))"
     (nreverse res)))
 
 
-
+;;;###autoload
 (defun tldr ()
   "Lookup tldr docs."
   (interactive)
