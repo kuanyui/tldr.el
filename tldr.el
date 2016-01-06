@@ -33,20 +33,36 @@
 (require 'url)
 (require 'cl-lib)
 
-(defvar tldr-directory-path (concat user-emacs-directory "tldr/"))
-(defvar tldr-saved-zip-path (concat user-emacs-directory "tldr-source.zip"))
-(defvar tldr-source-zip-url "https://github.com/tldr-pages/tldr/archive/master.zip")
-(defvar tldr-pages-dir (concat tldr-directory-path "pages/"))
-
-(define-derived-mode tldr-mode nil "tldr"
-  "Lookup tldr in Emacs"
-  (set (make-local-variable 'buffer-read-only) t))
-
 (defgroup tldr nil
   "tldr client for Emacs"
   :prefix "tldr-"
   :link '(url-link "http://github.com/kuanyui/tldr.el")
   :group 'help)
+
+(defcustom tldr-directory-path
+  (concat user-emacs-directory "tldr/")
+  :group 'tldr
+  :type 'string)
+
+(defcustom tldr-saved-zip-path
+  (concat user-emacs-directory "tldr-source.zip")
+  :group 'tldr
+  :type 'string)
+
+(defcustom tldr-source-zip-url
+  "https://github.com/tldr-pages/tldr/archive/master.zip"
+  :group 'tldr
+  :type 'string)
+
+(defcustom tldr-pages-dir
+  (concat tldr-directory-path "pages/")
+  :group 'tldr
+  :type 'string)
+
+(define-derived-mode tldr-mode nil "tldr"
+  "Lookup tldr in Emacs"
+  (set (make-local-variable 'buffer-read-only) t))
+
 
 (defgroup tldr-faces nil
   ""
