@@ -63,19 +63,13 @@
   "Lookup tldr in Emacs"
   (set (make-local-variable 'buffer-read-only) t))
 
-
-(defgroup tldr-faces nil
-  ""
-  :group 'tldr
-  :group 'faces)
-
 (defface tldr-title
   '((((class color) (background light))
      (:foreground "#ff8700" :bold t :height 1.2))
     (((class color) (background dark))
      (:foreground "#ffa722" :bold t :height 1.2)))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 (defface tldr-introduction
   '((((class color) (background light))
@@ -83,7 +77,7 @@
     (((class color) (background dark))
      (:foreground "#cdcdcd" :italic t)))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 (defface tldr-description
   '((((class color) (background light))
@@ -91,7 +85,7 @@
     (((class color) (background dark))
      (:foreground "#6faaff")))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 (defface tldr-code-block
   '((((class color) (background light))
@@ -99,7 +93,7 @@
     (((class color) (background dark))
      (:foreground "#a1db00" :background "#5a5a5a")))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 (defface tldr-command-argument
   '((((class color) (background light))
@@ -107,7 +101,7 @@
     (((class color) (background dark))
      (:foreground "#eee" :background "#5a5a5a")))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 (defface tldr-command-itself
   '((((class color) (background light))
@@ -115,7 +109,7 @@
     (((class color) (background dark))
      (:foreground "#5a5a5a" :background "#a1db00" :bold t)))
   ""
-  :group 'tldr-faces)
+  :group 'tldr)
 
 
 ;;;###autoload
