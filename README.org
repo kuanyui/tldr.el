@@ -6,13 +6,18 @@ Elegantly good-looking(tm)!
 
 [[file:screenshot.png]]
 
+** Requirements
+- > Emacs 24.3
+
 ** Install
-I'm dealing with MELPA. Please install manually currently.
+=tldr.el= is now available on [[https://github.com/milkypostman/melpa][MELPA]]. 
+
+If you don't know what it is, please read its README to setup MELPA on your Emacs.
 
 ** Usage
 =M-x tldr=
 
-Notice that the first time using it will automatically download the latest tldr docs.
+Notice that at the first time using, it will automatically download the latest tldr docs to local.
 
 You can use =M-x tldr-update-docs= to update docs.
 
