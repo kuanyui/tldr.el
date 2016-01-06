@@ -135,7 +135,7 @@
 (defun tldr-get-system-name ()
   (cond ((member system-type '(gnu gnu/linux gnu/kfreebsd cygwin))
          '("common" "linux"))
-        ((member system-type '("darwin"))
+        ((member system-type '(darwin))
          '("common" "osx"))
         (t
          '("common"))))
