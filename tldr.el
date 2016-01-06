@@ -168,7 +168,8 @@
                        ((string-prefix-p "> " line)
                         (propertize (concat "    " (substring line 2)) 'face 'tldr-introduction))
                        ((string-prefix-p "- " line)
-                        (propertize (substring line 2) 'face 'tldr-description))
+                        (concat "- "
+                                (propertize (substring line 2) 'face 'tldr-description)))
                        ((string-prefix-p "`" line)
                         (let ((brackets-positions (tldr-match-positions "{{\\(.+?\\)}}" line)))
                           (setq line
@@ -179,7 +180,7 @@
                               (mapc (lambda (pos)
                                       (set-text-properties (car pos) (cdr pos) '(face tldr-command-argument) line))
                                     brackets-positions))
-                          (replace-regexp-in-string "{{\\(.+?\\)}}" "\\1" line)
+                          (concat "  " (replace-regexp-in-string "{{\\(.+?\\)}}" "\\1" line))
                           )))
                  )
                lines "\n")
