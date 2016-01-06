@@ -22,4 +22,4 @@ Notice that at the first time using, it will automatically download the latest t
 You can use =M-x tldr-update-docs= to update docs.
 
 ** License
-GPL v3
+WTFPL 2.0
