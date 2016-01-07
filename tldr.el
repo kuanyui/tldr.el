@@ -100,9 +100,9 @@
 
 (defface tldr-command-argument
   '((((class color) (background light))
-     (:foreground "#555" :background "#d7ff87"))
+     (:foreground "#555" :background "#d7ff87" :underline t))
     (((class color) (background dark))
-     (:foreground "#eee" :background "#5a5a5a")))
+     (:foreground "#eee" :background "#5a5a5a" :underline t)))
   ""
   :group 'tldr)
 
@@ -110,7 +110,7 @@
   '((((class color) (background light))
      (:foreground "#d7ff87" :background "#008700" :bold t))
     (((class color) (background dark))
-     (:foreground "#5a5a5a" :background "#a1db00" :bold t)))
+     (:foreground "#5a5a5a" :background "#afd700" :bold t)))
   ""
   :group 'tldr)
 
