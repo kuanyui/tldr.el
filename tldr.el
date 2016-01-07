@@ -62,7 +62,7 @@
   "Don't change me you idiot!")
 
 
-(define-derived-mode tldr-mode nil "tldr"
+(define-derived-mode tldr-mode help-mode "tldr"
   "Lookup tldr in Emacs"
   (set (make-local-variable 'buffer-read-only) t))
 
