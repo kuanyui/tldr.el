@@ -210,7 +210,7 @@ e.g. ((1 . 5) (8 . 10))"
 Please wait a minute for downloading latest tldr docs...")
         (sit-for 3)
         (tldr-update-docs)))
-  (let ((command (completing-read "tldr: " (tldr-get-commands-list) nil t "" nil t)))
+  (let ((command (completing-read "tldr: " (tldr-get-commands-list) nil t)))
     (with-temp-buffer-window "*tldr*" nil nil)
     (if (not (equal (buffer-name) "*tldr*"))
         (switch-to-buffer-other-window "*tldr*"))
