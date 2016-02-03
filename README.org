@@ -17,6 +17,8 @@ If you don't know what it is, please read its README to setup MELPA on your Emac
 ** Usage
 =M-x tldr=
 
+Use =C-c C-b= & =C-c C-f= to navigate in lookup history.
+
 Notice that at the first time using, it will automatically download the latest tldr docs to local.
 
 You can use =M-x tldr-update-docs= to update docs.

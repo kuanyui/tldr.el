@@ -201,7 +201,7 @@ e.g. ((1 . 5) (8 . 10))"
 
 
 ;;;###autoload
-(defun tldr ()
+(defun tldr (&optional cmd)
   "Lookup tldr docs."
   (interactive)
   (if (not (file-exists-p tldr-directory-path))
@@ -210,7 +210,8 @@ e.g. ((1 . 5) (8 . 10))"
 Please wait a minute for downloading latest tldr docs...")
         (sit-for 3)
         (tldr-update-docs)))
-  (let ((command (completing-read "tldr: " (tldr-get-commands-list) nil t)))
+  (let ((command (or cmd
+                     (completing-read "tldr: " (tldr-get-commands-list) nil t))))
     (if (string= "" command)
         (message "No input, canceled.")
       (progn
@@ -219,6 +220,14 @@ Please wait a minute for downloading latest tldr docs...")
             (switch-to-buffer-other-window "*tldr*"))
         (if (not (equal major-mode 'tldr-mode))
             (tldr-mode))
+        (let ((help-xref-following t))  ;See `help-buffer' & `help-setup-xref'
+          (help-setup-xref (list #'tldr command) t))
+        ;; fuck you docstring (╯°□°）╯︵ ┻━┻
+        ;; `help-setup-xref'
+        ;; (help-setup-xref ITEM INTERACTIVE-P)
+        ;; ITEM is a (FUNCTION . ARGS) pair appropriate for recreating the help .....
+        ;; NOT A PAIR AT ALL! This shit waste me one hour.
+
         (let (buffer-read-only)
           (insert (tldr-render-markdown command))
           (goto-char (point-min)))
