@@ -66,6 +66,11 @@
   "Lookup tldr in Emacs"
   (set (make-local-variable 'buffer-read-only) t))
 
+
+(define-key tldr-mode-map (kbd "SPC") 'tldr)
+(define-key tldr-mode-map (kbd "]") 'help-go-forward)
+(define-key tldr-mode-map (kbd "[") 'help-go-back)
+
 (defface tldr-title
   '((((class color) (background light))
      (:foreground "#ff8700" :bold t :height 1.2))
