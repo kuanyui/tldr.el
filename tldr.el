@@ -235,6 +235,17 @@ Please wait a minute for downloading latest tldr docs...")
 
         (let (buffer-read-only)
           (insert (tldr-render-markdown command))
+          (insert "\n")
+          ;; Make a back-reference in this buffer if appropriate.
+          (when help-xref-stack
+            (help-insert-xref-button help-back-label 'help-back
+                                     (current-buffer)))
+          ;; Make a forward-reference in this buffer if appropriate.
+          (when help-xref-forward-stack
+            (when help-xref-stack
+              (insert "\t"))
+            (help-insert-xref-button help-forward-label 'help-forward
+                                     (current-buffer)))
           (goto-char (point-min)))
         ))))
 
