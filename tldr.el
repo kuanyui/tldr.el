@@ -185,11 +185,8 @@
                               (mapc (lambda (pos)
                                       (set-text-properties (car pos) (cdr pos) '(face tldr-command-argument) line))
                                     brackets-positions))
-                          (concat "  " (replace-regexp-in-string "{{\\(.+?\\)}}" "\\1" line))
-                          )))
-                 )
-               lines "\n")
-    ))
+                          (concat "  " (replace-regexp-in-string "{{\\(.+?\\)}}" "\\1" line))))))
+               lines "\n")))
 
 (defun tldr-match-positions (regexp str)
   "Get all matched regexp groups positions grabbed with \\(\\)
@@ -200,8 +197,7 @@ e.g. ((1 . 5) (8 . 10))"
                 (< pos (length str) ) )
       (let ((m (match-end 0)))
         (push (cons (match-beginning 0) (1- m)) res)
-        (setq pos m)
-        ))
+        (setq pos m)))
     (nreverse res)))
 
 
@@ -246,8 +242,7 @@ Please wait a minute for downloading latest tldr docs...")
               (insert "\t"))
             (help-insert-xref-button help-forward-label 'help-forward
                                      (current-buffer)))
-          (goto-char (point-min)))
-        ))))
+          (goto-char (point-min)))))))
 
 (provide 'tldr)
 ;;; tldr.el ends here
