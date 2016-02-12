@@ -181,10 +181,20 @@
                                 (replace-regexp-in-string
                                  (concat "^" command) (propertize command 'face 'tldr-command-itself)
                                  (propertize (substring line 1 -1) 'face 'tldr-code-block)))
-                          (if brackets-positions
-                              (mapc (lambda (pos)
-                                      (set-text-properties (car pos) (cdr pos) '(face tldr-command-argument) line))
-                                    brackets-positions))
+                          (when brackets-positions
+                            ;; [WORKAROUND] downcase all arguments (e.g. FILES, COMMANDS)
+                            ;; Because these shit will be effected by help-mode's highlighting.
+                            (mapc (lambda (begin-end)
+                                    (let ((begin (car begin-end))
+                                          (end (cdr begin-end)))
+                                      (setq line (concat (substring line 0 begin)
+                                                         (downcase (substring line begin end))
+                                                         (substring line end)))))
+                                  brackets-positions)
+                            ;; Add face
+                            (mapc (lambda (pos)
+                                    (set-text-properties (car pos) (cdr pos) '(face tldr-command-argument) line))
+                                  brackets-positions))
                           (concat "  " (replace-regexp-in-string "{{\\(.+?\\)}}" "\\1" line))))))
                lines "\n")))
 
