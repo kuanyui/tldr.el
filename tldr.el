@@ -181,14 +181,14 @@
                         (setq line (replace-regexp-in-string
                                     (concat "^" command)
                                     (propertize command 'face 'tldr-command-itself)
-                                    line t))
+                                    line 'fixedcase))
                         ;; Strip {{}} and add command argument face
                         (while (string-match "{{\\(.+?\\)}}" line)
                           (let ((m0 (match-string 0 line))
                                 (m1 (propertize
                                      (match-string 1 line)
                                      'face 'tldr-command-argument)))
-                            (setq line (replace-regexp-in-string m0 m1 line t))))
+                            (setq line (replace-regexp-in-string m0 m1 line 'fixedcase))))
                         (concat "  " line))))
                lines "\n")))
 
