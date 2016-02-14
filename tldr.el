@@ -164,7 +164,6 @@
                  (with-temp-buffer
                    (insert-file-contents file-path)
                    (buffer-string)) "\n")))
-
     (mapconcat (lambda (line)
                  (cond ((equal "" line)
                         "")
@@ -176,40 +175,22 @@
                         (concat "- "
                                 (propertize (substring line 2) 'face 'tldr-description)))
                        ((string-prefix-p "`" line)
-                        (let ((brackets-positions (tldr-match-positions "{{\\(.+?\\)}}" line)))
-                          (setq line
-                                (replace-regexp-in-string
-                                 (concat "^" command) (propertize command 'face 'tldr-command-itself)
-                                 (propertize (substring line 1 -1) 'face 'tldr-code-block)))
-                          (when brackets-positions
-                            ;; [WORKAROUND] downcase all arguments (e.g. FILES, COMMANDS)
-                            ;; Because these shit will be effected by help-mode's highlighting.
-                            (mapc (lambda (begin-end)
-                                    (let ((begin (car begin-end))
-                                          (end (cdr begin-end)))
-                                      (setq line (concat (substring line 0 begin)
-                                                         (downcase (substring line begin end))
-                                                         (substring line end)))))
-                                  brackets-positions)
-                            ;; Add face
-                            (mapc (lambda (pos)
-                                    (set-text-properties (car pos) (cdr pos) '(face tldr-command-argument) line))
-                                  brackets-positions))
-                          (concat "  " (replace-regexp-in-string "{{\\(.+?\\)}}" "\\1" line))))))
+                        ;; Strip leading/trailing back-ticks and add code block face
+                        (setq line (propertize (substring line 1 -1) 'face 'tldr-code-block))
+                        ;; Add command face
+                        (setq line (replace-regexp-in-string
+                                    (concat "^" command)
+                                    (propertize command 'face 'tldr-command-itself)
+                                    line t))
+                        ;; Strip {{}} and add command argument face
+                        (while (string-match "{{\\(.+?\\)}}" line)
+                          (let ((m0 (match-string 0 line))
+                                (m1 (propertize
+                                     (match-string 1 line)
+                                     'face 'tldr-command-argument)))
+                            (setq line (replace-regexp-in-string m0 m1 line t))))
+                        (concat "  " line))))
                lines "\n")))
-
-(defun tldr-match-positions (regexp str)
-  "Get all matched regexp groups positions grabbed with \\(\\)
-e.g. ((1 . 5) (8 . 10))"
-  (let ((pos 0)
-        res)
-    (while (and (string-match regexp str pos)
-                (< pos (length str) ) )
-      (let ((m (match-end 0)))
-        (push (cons (match-beginning 0) (1- m)) res)
-        (setq pos m)))
-    (nreverse res)))
-
 
 ;;;###autoload
 (defun tldr (&optional cmd)
