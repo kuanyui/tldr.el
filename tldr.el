@@ -187,7 +187,8 @@
                           (let ((whole-match (match-string 0 line))
                                 (argument (propertize (match-string 1 line)
                                                       'face 'tldr-command-argument)))
-                            (setq line (replace-regexp-in-string whole-match argument line 'fixedcase))))
+                            (setq line (replace-regexp-in-string (regexp-quote whole-match) argument line
+                                                                 'fixedcase 'literal))))
                         (concat "  " line))))
                lines "\n")))
 
