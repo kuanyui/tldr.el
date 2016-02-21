@@ -47,7 +47,7 @@
   :type 'string)
 
 (defcustom tldr-saved-zip-path
-  (concat user-emacs-directory "tldr-source.zip")
+  (concat temporary-file-directory "tldr-source.zip")
   "The temporary location for downloading zip"
   :group 'tldr
   :type 'string)
