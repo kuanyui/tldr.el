@@ -46,6 +46,12 @@
   :group 'tldr
   :type 'string)
 
+(defcustom tldr-use-word-at-point
+  nil
+  "Use the word at point as the initial search term when selecting a command"
+  :group 'tldr
+  :type 'boolean)
+
 (defcustom tldr-saved-zip-path
   (concat user-emacs-directory "tldr-source.zip")
   "The temporary location for downloading zip"
@@ -203,7 +209,8 @@ Please wait a minute for downloading latest tldr docs...")
         (sit-for 3)
         (tldr-update-docs)))
   (let ((command (or cmd
-                     (completing-read "tldr: " (tldr-get-commands-list) nil t))))
+                     (completing-read "tldr: " (tldr-get-commands-list) nil t
+                                      (when tldr-use-word-at-point (current-word))))))
     (if (string= "" command)
         (message "No input, canceled.")
       (progn
