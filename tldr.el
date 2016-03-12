@@ -190,11 +190,9 @@
                                     line 'fixedcase))
                         ;; Strip {{}} and add command argument face
                         (while (string-match "{{\\(.+?\\)}}" line)
-                          (let ((whole-match (match-string 0 line))
-                                (argument (propertize (match-string 1 line)
+                          (let ((argument (propertize (match-string 1 line)
                                                       'face 'tldr-command-argument)))
-                            (setq line (replace-regexp-in-string (regexp-quote whole-match) argument line
-                                                                 'fixedcase 'literal))))
+                            (setq line (replace-match argument 'fixedcase 'literal line 0))))
                         (concat "  " line))))
                lines "\n")))
 
