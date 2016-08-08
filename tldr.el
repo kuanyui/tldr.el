@@ -240,5 +240,58 @@ Please wait a minute for downloading latest tldr docs...")
                                      (current-buffer)))
           (goto-char (point-min)))))))
 
+(declare-function Man-default-man-entry "man")
+(declare-function helm "helm")
+(declare-function helm-build-sync-source "helm-source")
+
+;;;###autoload
+(defun helm-tldr ()
+  "Helm interface for `tldr'."
+  (interactive)
+  (unless (require 'helm nil t)
+    (user-error "Helm not available"))
+  (require 'man)
+  (let* ((default-cmd (Man-default-man-entry))
+         (cmd (completing-read
+               (format "tldr%s"
+                       (if (string= default-cmd "")
+                           ": "
+                         (format " (default %s): " default-cmd)))
+               (tldr-get-commands-list)
+               nil t nil nil default-cmd))
+         (markdown (tldr-render-markdown cmd)))
+    (helm :sources (helm-build-sync-source "tldr"
+                     :header-name
+                     (lambda (_)
+                       (with-temp-buffer
+                         (insert markdown)
+                         (replace-regexp-in-string
+                          "\n\n *" ": "
+                          (buffer-substring-no-properties
+                           (point-min)
+                           (progn
+                             (goto-char (point-min))
+                             (forward-line 2)
+                             (line-end-position))))))
+                     :candidates
+                     (lambda ()
+                       (with-temp-buffer
+                         (insert markdown)
+                         (goto-char (point-min))
+                         (let ((res) text code)
+                           (while (re-search-forward "^- " nil 'no-error)
+                             (setq text (buffer-substring (point) (line-end-position)))
+                             (forward-line 2)
+                             (back-to-indentation)
+                             (setq code (buffer-substring (point) (line-end-position)))
+                             (push (concat text "\n" code) res))
+                           (nreverse res))))
+                     :multiline t
+                     :coerce (lambda (candidate) (substring candidate (1+ (string-match "\n" candidate))))
+                     :action
+                     '(("Insert command" . insert)
+                       ("Copy command to kill-ring" . kill-new)))
+          :buffer "*helm tldr*")))
+
 (provide 'tldr)
 ;;; tldr.el ends here
