@@ -7,7 +7,7 @@
 ;; Version: {{VERSION}}
 
 ;; WTFPL 2.0
-;; Ono Hiroko (kuanyui) (ɔ) Copyleft 2016
+;; Ono Hiroko (@kuanyui) (ɔ) Copyleft 2016-2017
 ;;
 ;; This program is free software. It comes without any warranty, to
 ;; the extent permitted by applicable law. You can redistribute it
@@ -130,16 +130,15 @@
 (defun tldr-update-docs ()
   "Get or update tldr docs from source."
   (interactive)
-  (if (not (executable-find "unzip"))
-      (message "unzip not found. Please install and run `tldr-update-docs' again.")
-    (progn
-      (if (file-exists-p tldr-directory-path)
-          (delete-directory tldr-directory-path 'recursive 'no-trash))
-      (url-copy-file tldr-source-zip-url tldr-saved-zip-path 'overwrite)
-      (shell-command (format "unzip -d %s %s" user-emacs-directory tldr-saved-zip-path))
-      (delete-file tldr-saved-zip-path)
-      (rename-file (concat user-emacs-directory "tldr-master") tldr-directory-path)
-      (message "Now tldr docs is updated!"))))
+  (if (tldr--check-unzip)
+      (progn
+        (if (file-exists-p tldr-directory-path)
+            (delete-directory tldr-directory-path 'recursive 'no-trash))
+        (url-copy-file tldr-source-zip-url tldr-saved-zip-path 'overwrite)
+        (shell-command (format "unzip -d %s %s" user-emacs-directory tldr-saved-zip-path))
+        (delete-file tldr-saved-zip-path)
+        (rename-file (concat user-emacs-directory "tldr-master") tldr-directory-path)
+        (message "Now tldr docs is updated!"))))
 
 
 
@@ -196,49 +195,56 @@
                         (concat "  " line))))
                lines "\n")))
 
+(defun tldr--check-unzip ()
+  (if (executable-find "unzip")
+      t
+    (progn (message "unzip not found. Please install and run `tldr-update-docs' again.") nil)))
+
 ;;;###autoload
 (defun tldr (&optional cmd)
   "Lookup tldr docs."
   (interactive)
   (if (not (file-exists-p tldr-directory-path))
-      (progn
-        (message "This is the first time using.
+      (if (tldr--check-unzip)
+          (progn
+            (message "This is the first time using.
 Please wait a minute for downloading latest tldr docs...")
-        (sit-for 3)
-        (tldr-update-docs)))
-  (let ((command (or cmd
-                     (completing-read "tldr: " (tldr-get-commands-list) nil t
-                                      (when tldr-use-word-at-point (current-word))))))
-    (if (string= "" command)
-        (message "No input, canceled.")
-      (progn
-        (with-temp-buffer-window "*tldr*" nil nil)
-        (if (not (equal (buffer-name) "*tldr*"))
-            (switch-to-buffer-other-window "*tldr*"))
-        (if (not (equal major-mode 'tldr-mode))
-            (tldr-mode))
-        (let ((help-xref-following t))  ;See `help-buffer' & `help-setup-xref'
-          (help-setup-xref (list #'tldr command) t))
-        ;; fuck you docstring (╯°□°）╯︵ ┻━┻
-        ;; `help-setup-xref'
-        ;; (help-setup-xref ITEM INTERACTIVE-P)
-        ;; ITEM is a (FUNCTION . ARGS) pair appropriate for recreating the help .....
-        ;; NOT A PAIR AT ALL! This shit waste me one hour.
+            (sit-for 3)
+            (tldr-update-docs)
+            (tldr)))
+    (let ((command (or cmd
+                       (completing-read "tldr: " (tldr-get-commands-list) nil t
+                                        (when tldr-use-word-at-point (current-word))))))
+      (if (string= "" command)
+          (message "No input, canceled.")
+        (progn
+          (with-temp-buffer-window "*tldr*" nil nil)
+          (if (not (equal (buffer-name) "*tldr*"))
+              (switch-to-buffer-other-window "*tldr*"))
+          (if (not (equal major-mode 'tldr-mode))
+              (tldr-mode))
+          (let ((help-xref-following t))  ;See `help-buffer' & `help-setup-xref'
+            (help-setup-xref (list #'tldr command) t))
+          ;; fuck you docstring (╯°□°）╯︵ ┻━┻
+          ;; `help-setup-xref'
+          ;; (help-setup-xref ITEM INTERACTIVE-P)
+          ;; ITEM is a (FUNCTION . ARGS) pair appropriate for recreating the help .....
+          ;; NOT A PAIR AT ALL! This shit waste me one hour.
 
-        (let (buffer-read-only)
-          (insert (tldr-render-markdown command))
-          (insert "\n")
-          ;; Make a back-reference in this buffer if appropriate.
-          (when help-xref-stack
-            (help-insert-xref-button help-back-label 'help-back
-                                     (current-buffer)))
-          ;; Make a forward-reference in this buffer if appropriate.
-          (when help-xref-forward-stack
+          (let (buffer-read-only)
+            (insert (tldr-render-markdown command))
+            (insert "\n")
+            ;; Make a back-reference in this buffer if appropriate.
             (when help-xref-stack
-              (insert "\t"))
-            (help-insert-xref-button help-forward-label 'help-forward
-                                     (current-buffer)))
-          (goto-char (point-min)))))))
+              (help-insert-xref-button help-back-label 'help-back
+                                       (current-buffer)))
+            ;; Make a forward-reference in this buffer if appropriate.
+            (when help-xref-forward-stack
+              (when help-xref-stack
+                (insert "\t"))
+              (help-insert-xref-button help-forward-label 'help-forward
+                                       (current-buffer)))
+            (goto-char (point-min))))))))
 
 (declare-function Man-default-man-entry "man")
 (declare-function helm "helm")
