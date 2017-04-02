@@ -41,7 +41,7 @@
   :group 'help)
 
 (defcustom tldr-directory-path
-  (concat user-emacs-directory "tldr/")
+  (concat (file-truename user-emacs-directory) "tldr/")
   "The directory name of tldr."
   :group 'tldr
   :type 'string)
@@ -135,9 +135,9 @@
         (if (file-exists-p tldr-directory-path)
             (delete-directory tldr-directory-path 'recursive 'no-trash))
         (url-copy-file tldr-source-zip-url tldr-saved-zip-path 'overwrite)
-        (shell-command (format "unzip -d %s %s" user-emacs-directory tldr-saved-zip-path))
+        (shell-command (format "unzip -d %s %s" (file-truename user-emacs-directory) tldr-saved-zip-path))
         (delete-file tldr-saved-zip-path)
-        (rename-file (concat user-emacs-directory "tldr-master") tldr-directory-path)
+        (rename-file (concat (file-truename user-emacs-directory) "tldr-master") tldr-directory-path)
         (message "Now tldr docs is updated!"))))
 
 
