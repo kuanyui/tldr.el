@@ -64,6 +64,12 @@
   :group 'tldr
   :type 'string)
 
+(defcustom tldr-enabled-categories '()
+  "If nil, search tldr files according to your system-type automatically."
+  :group 'tldr
+  :type 'list  ; [HELP] I don't know how to make checkbox for a string list
+  :options '("common" "linux" "osx" "sunos"))
+
 (defvar tldr-pages-dir (concat tldr-directory-path "pages/")
   "Don't change me you idiot!")
 
@@ -143,12 +149,13 @@
 
 
 (defun tldr-get-system-name ()
-  (cond ((member system-type '(gnu gnu/linux gnu/kfreebsd cygwin))
-         '("common" "linux"))
-        ((member system-type '(darwin))
-         '("common" "osx"))
-        (t
-         '("common"))))
+  (or tldr-enabled-categories
+      (cond ((member system-type '(gnu gnu/linux gnu/kfreebsd cygwin))
+             '("common" "linux"))
+            ((member system-type '(darwin))
+             '("common" "osx"))
+            (t
+             '("common")))))
 
 (defun tldr-get-commands-list ()
   "For `completing-read'"

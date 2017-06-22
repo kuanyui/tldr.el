@@ -10,9 +10,18 @@ Elegantly good-looking(tm)!
 - > Emacs 24.3
 
 ** Install
-=tldr.el= is now available on [[https://github.com/milkypostman/melpa][MELPA]]. 
+=tldr.el= is now available on [[https://github.com/milkypostman/melpa][MELPA]].
 
 If you don't know what it is, please read its README to setup MELPA on your Emacs.
+
+*** OS Specific tldr Pages
+By default, =tldr-mode= will choose corresponding os-specific tldr pages automatically by your =system-type=.
+
+Assume you are using Windows, but you still want forcely =tldr-mode= to show pages for Linux / OSX / SunOS, you can use following:
+
+#+BEGIN_SRC elisp
+(setq tldr-enabled-categories '("common" "linux" "osx" "sunos"))
+#+END_SRC
 
 ** Usage
 =M-x tldr=
