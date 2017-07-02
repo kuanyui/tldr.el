@@ -41,7 +41,7 @@
   :group 'help)
 
 (defcustom tldr-directory-path
-  (concat (file-truename user-emacs-directory) "tldr/")
+  (expand-file-name "tldr/" user-emacs-directory)
   "The directory name of tldr."
   :group 'tldr
   :type 'string)
