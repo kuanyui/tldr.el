@@ -70,10 +70,6 @@
   :type 'list  ; [HELP] I don't know how to make checkbox for a string list
   :options '("common" "linux" "osx" "sunos"))
 
-(defvar tldr-pages-dir (concat tldr-directory-path "pages/")
-  "Don't change me you idiot!")
-
-
 (define-derived-mode tldr-mode help-mode "tldr"
   "Lookup tldr in Emacs"
   (set (make-local-variable 'buffer-read-only) t))
@@ -161,13 +157,21 @@
   "For `completing-read'"
   (mapcar (lambda (file.md) (substring file.md 0 -3))
           (cl-remove-if (lambda (y) (member y '("." "..")))
-                        (cl-mapcan (lambda (x) (directory-files (concat tldr-pages-dir x)))
+                        (cl-mapcan (lambda (x)
+                                     (directory-files
+                                      (expand-file-name
+                                       (convert-standard-filename
+                                        (concat "pages/" x))
+                                       tldr-directory-path)))
                                    (tldr-get-system-name)))))
 
 (defun tldr-get-file-path-from-command-name (command)
   (cl-find-if #'file-exists-p
               (mapcar (lambda (system)
-                        (format "%s%s/%s.md" tldr-pages-dir system command))
+                        (expand-file-name
+                         (convert-standard-filename
+                          (format "pages/%s%s.md" system command))
+                         tldr-directory-path))
                       (tldr-get-system-name))))
 
 (defun tldr-render-markdown (command)
