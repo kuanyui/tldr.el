@@ -170,7 +170,7 @@
               (mapcar (lambda (system)
                         (expand-file-name
                          (convert-standard-filename
-                          (format "pages/%s%s.md" system command))
+                          (format "pages/%s/%s.md" system command))
                          tldr-directory-path))
                       (tldr-get-system-name))))
 
