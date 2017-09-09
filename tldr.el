@@ -180,31 +180,39 @@
                  (with-temp-buffer
                    (insert-file-contents file-path)
                    (buffer-string)) "\n")))
-    (mapconcat (lambda (line)
-                 (cond ((equal "" line)
-                        "")
-                       ((string-prefix-p "# " line)
-                        (propertize (substring line 2) 'face 'tldr-title))
-                       ((string-prefix-p "> " line)
-                        (propertize (concat "    " (substring line 2)) 'face 'tldr-introduction))
-                       ((string-prefix-p "- " line)
-                        (concat "- "
-                                (propertize (substring line 2) 'face 'tldr-description)))
-                       ((string-prefix-p "`" line)
-                        ;; Strip leading/trailing back-ticks and add code block face
-                        (setq line (propertize (substring line 1 -1) 'face 'tldr-code-block))
-                        ;; Add command face
-                        (setq line (replace-regexp-in-string
-                                    (concat "^" command)
-                                    (propertize command 'face 'tldr-command-itself)
-                                    line 'fixedcase))
-                        ;; Strip {{}} and add command argument face
-                        (while (string-match "{{\\(.+?\\)}}" line)
-                          (let ((argument (propertize (match-string 1 line)
-                                                      'face 'tldr-command-argument)))
-                            (setq line (replace-match argument 'fixedcase 'literal line 0))))
-                        (concat "  " line))))
-               lines "\n")))
+    (tldr--render-lines command lines)
+    ))
+
+(defun tldr--render-lines (command raw-lines &optional rendered-lines)
+  (if (null raw-lines)
+      (string-join (reverse rendered-lines) "\n")
+    (let* ((line (car raw-lines))
+           (rendered-line (cond ((null rendered-lines)
+                                 (propertize line 'face 'tldr-title))
+                                ;; empty line
+                                ((string-match-p "^ *$" line) "")
+                                ;; introduction
+                                ((string-prefix-p "> " line)
+                                 (propertize (concat "    " (substring line 2)) 'face 'tldr-introduction))
+                                ;; commnad
+                                ((string-prefix-p "    " line)
+                                 (setq line (propertize (substring line 4) 'face 'tldr-code-block))
+                                 (setq line (replace-regexp-in-string  ; face for command itself
+                                             (concat "^" command)
+                                             (propertize command 'face 'tldr-command-itself)
+                                             line 'fixedcase))
+                                 (while (string-match "{{\\(.+?\\)}}" line)  ; face for {{}} and arguments
+                                   (let ((argument (propertize (match-string 1 line)
+                                                               'face 'tldr-command-argument)))
+                                     (setq line (replace-match argument 'fixedcase 'literal line 0))))
+                                 (concat "  " line))
+                                ;; command description
+                                (t
+                                 (concat "- " (propertize line 'face 'tldr-description)))
+                                )))
+      (tldr--render-lines command
+                          (if rendered-lines (cdr raw-lines) (cddr raw-lines))
+                          (cons rendered-line rendered-lines)))))
 
 (defun tldr--check-unzip ()
   (if (executable-find "unzip")
