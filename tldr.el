@@ -157,10 +157,10 @@
    :success
    (cl-function (lambda (&key data &allow-other-keys)
 		  (when data
-		    (with-current-buffer (get-buffer-create "*request data*")
-		      (erase-buffer)
-		      (insert data)
-		      (write-file file)))))
+		    (with-temp-buffer (get-buffer-create "*request data*")
+				      (erase-buffer)
+				      (insert data)
+				      (write-file file)))))
    :error
    (cl-function (lambda (&rest args &key error-thrown &allow-other-keys)
 		  (message "Got error: %S" error-thrown)))))
