@@ -143,9 +143,9 @@
         (if (file-exists-p tldr-directory-path)
             (delete-directory tldr-directory-path 'recursive 'no-trash))
         (tldr-request-data tldr-source-zip-url tldr-saved-zip-path)
-        (shell-command (format "unzip -d %s %s" (file-truename user-emacs-directory) tldr-saved-zip-path))
+        (shell-command-to-string (format "unzip -d %s %s" (file-truename user-emacs-directory) tldr-saved-zip-path))
         (delete-file tldr-saved-zip-path)
-        (shell-command (format "mv '%s' '%s'" (concat (file-truename user-emacs-directory) "tldr-master") tldr-directory-path))
+        (shell-command-to-string (format "mv '%s' '%s'" (concat (file-truename user-emacs-directory) "tldr-master") tldr-directory-path))
         (message "Now tldr docs is updated!"))))
 
 
