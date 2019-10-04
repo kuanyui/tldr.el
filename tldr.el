@@ -160,7 +160,8 @@
 		    (with-temp-buffer (get-buffer-create "*request data*")
 				      (erase-buffer)
 				      (insert data)
-				      (write-file file)))))
+				      (write-file file)
+				      (kill-buffer "*request data*")))))
    :error
    (cl-function (lambda (&rest args &key error-thrown &allow-other-keys)
 		  (message "Got error: %S" error-thrown)))))
