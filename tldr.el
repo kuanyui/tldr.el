@@ -78,6 +78,12 @@ source."
   :group 'tldr
   :type '(repeat string))  ; [HELP] I don't know how to make checkbox for a string list
 
+(defcustom tldr-locales
+  nil
+  "Priority list of locales to display tldr pages in."
+  :group 'tldr
+  :type '(repeat string))
+
 (define-derived-mode tldr-mode help-mode "tldr"
   "Lookup TLDR man pages from within in Emacs."
   (set (make-local-variable 'buffer-read-only) t))
@@ -145,11 +151,10 @@ source."
         (if (file-exists-p tldr-directory-path)
             (delete-directory tldr-directory-path 'recursive 'no-trash))
         (tldr-request-data tldr-source-zip-url tldr-saved-zip-path)
-        (shell-command (format "unzip -d %s %s" (file-truename user-emacs-directory) tldr-saved-zip-path))
+        (shell-command-to-string (format "unzip -d %s %s" (file-truename user-emacs-directory) tldr-saved-zip-path))
         (delete-file tldr-saved-zip-path)
-        (shell-command (format "mv '%s' '%s'" (concat (file-truename user-emacs-directory) "tldr-master") tldr-directory-path))
+        (shell-command-to-string (format "mv '%s' '%s'" (concat (file-truename user-emacs-directory) "tldr-master") tldr-directory-path))
         (message "The TLDR docs are up to date!"))))
-
 
 (defun tldr-request-data (url file)
   "Request data from URL and save file at the location of FILE."
@@ -159,10 +164,11 @@ source."
    :success
    (cl-function (lambda (&key data &allow-other-keys)
 		  (when data
-		    (with-current-buffer (get-buffer-create "*request data*")
-		      (erase-buffer)
-		      (insert data)
-		      (write-file file)))))
+		    (with-temp-buffer (get-buffer-create "*request data*")
+				      (erase-buffer)
+				      (insert data)
+				      (write-file file)
+				      (kill-buffer "*request data*")))))
    :error
    (cl-function (lambda (&rest args &key error-thrown &allow-other-keys)
 		  (message "Got error: %S" error-thrown)))))
@@ -179,14 +185,43 @@ source."
                                        tldr-directory-path)))
                                    tldr-enabled-categories))))
 
+(defun tldr-get-locales ()
+  "Return a priority list of locales as specified by
+`tldr-locales' and the LANG and LANGUAGE environment variables."
+  (cond
+   (tldr-locales tldr-locales)
+   ((getenv "LANG") (list (getenv "LANG")))
+   ((getenv "LANGUAGE") (split-string (getenv "LANGUAGE") ":"))))
+
+(defun tldr-page-exists-p (command system &optional locale)
+  "Return the file path of the tldr page specified by COMMAND,
+SYSTEM and LOCALE. Return nil if such a page is not found. If
+optional argument LOCALE is unspecified, return the file path of
+the default English language page."
+  (cl-some (lambda (locale-extension)
+             (let ((filename
+                    (expand-file-name
+                     (convert-standard-filename
+                      (format "pages%s/%s/%s.md"
+                              locale-extension system command))
+                     tldr-directory-path)))
+               (and (file-exists-p filename)
+                    filename)))
+           (if locale
+               (let ((language (when (string-match "^\\([^_]*\\)" locale)
+                                 (match-string 1 locale)))
+                     (territory (when (string-match "^[^_]*_\\([^.]*\\)" locale)
+                                  (match-string 1 locale))))
+                 (list (format ".%s_%s" language territory)
+                       (format ".%s" language)))
+             (list ""))))
+
 (defun tldr-get-file-path-from-command-name (command)
-  (cl-find-if #'file-exists-p
-              (mapcar (lambda (system)
-                        (expand-file-name
-                         (convert-standard-filename
-                          (format "pages/%s/%s.md" system command))
-                         tldr-directory-path))
-                      tldr-enabled-categories)))
+  (cl-some (lambda (system)
+             (or (cl-some (apply-partially #'tldr-page-exists-p command system)
+                          (tldr-get-locales))
+                 (tldr-page-exists-p command system)))
+           tldr-enabled-categories))
 
 (defun tldr-render-markdown (command)
   (let* ((file-path (tldr-get-file-path-from-command-name command))
