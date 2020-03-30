@@ -36,7 +36,7 @@
 (require 'request)
 
 (defgroup tldr nil
-  "tldr client for Emacs"
+  "An Emacs client for the TLDR community man pages."
   :prefix "tldr-"
   :link '(url-link "http://github.com/kuanyui/tldr.el")
   :group 'help)
@@ -49,19 +49,21 @@
 
 (defcustom tldr-use-word-at-point
   nil
-  "Use the word at point as the initial search term when selecting a command"
+  "Use the word at point as the initial search term when
+selecting a command."
   :group 'tldr
   :type 'boolean)
 
 (defcustom tldr-saved-zip-path
   (concat temporary-file-directory "tldr-source.zip")
-  "The temporary location for downloading zip"
+  "The temporary location for downloading the zipped TLDR
+source."
   :group 'tldr
   :type 'string)
 
 (defcustom tldr-source-zip-url
   "https://github.com/tldr-pages/tldr/archive/master.zip"
-  "Zip URL on GitHub."
+  "The location of the zipped TLDR source on GitHub."
   :group 'tldr
   :type 'string)
 
@@ -72,7 +74,7 @@
          '("common" "osx"))
         (t
          '("common")))
-  "List of enabled tldr categories."
+  "A list of the enabled TLDR categories."
   :group 'tldr
   :type '(repeat string))  ; [HELP] I don't know how to make checkbox for a string list
 
@@ -83,7 +85,7 @@
   :type '(repeat string))
 
 (define-derived-mode tldr-mode help-mode "tldr"
-  "Lookup tldr in Emacs"
+  "Lookup TLDR man pages from within in Emacs."
   (set (make-local-variable 'buffer-read-only) t))
 
 
@@ -142,7 +144,7 @@
 
 ;;;###autoload
 (defun tldr-update-docs ()
-  "Get or update tldr docs from source."
+  "Get or update the TLDR docs from source."
   (interactive)
   (if (tldr--check-unzip)
       (progn
@@ -152,11 +154,10 @@
         (shell-command-to-string (format "unzip -d %s %s" (file-truename user-emacs-directory) tldr-saved-zip-path))
         (delete-file tldr-saved-zip-path)
         (shell-command-to-string (format "mv '%s' '%s'" (concat (file-truename user-emacs-directory) "tldr-master") tldr-directory-path))
-        (message "Now tldr docs is updated!"))))
-
+        (message "The TLDR docs are up to date!"))))
 
 (defun tldr-request-data (url file)
-  "Resuest data from URL and save file at the location of FILE."
+  "Request data from URL and save file at the location of FILE."
   (request
    url
    :parser 'buffer-string
@@ -261,18 +262,18 @@ the default English language page."
 
 ;;;###autoload
 (defun tldr (&optional cmd)
-  "Lookup tldr docs."
+  "Lookup TLDR docs."
   (interactive)
   (if (not (file-exists-p tldr-directory-path))
       (if (tldr--check-unzip)
           (progn
-            (message "This is the first time using.
-Please wait a minute for downloading latest tldr docs...")
+            (message "This is the first time you have run TLDR.
+Please wait while the latest TLDR docs are downloaded...")
             (sit-for 3)
             (tldr-update-docs)
             (tldr)))
     (let ((command (or cmd
-                       (completing-read "tldr: " (tldr-get-commands-list) nil t
+                       (completing-read "TLDR: " (tldr-get-commands-list) nil t
                                         (when tldr-use-word-at-point (current-word))))))
       (if (string= "" command)
           (message "No input, canceled.")
