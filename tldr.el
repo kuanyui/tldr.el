@@ -2,7 +2,7 @@
 
 ;; Author: Ono Hiroko <azazabc123@gmail.com>
 ;; Keywords: tools, docs
-;; Package-Requires: ((emacs "24.3") (request "0.3.0"))
+;; Package-Requires: ((emacs "24.3"))
 ;; X-URL: https://github.com/kuanyui/tldr.el
 ;; Version: {{VERSION}}
 
@@ -33,7 +33,6 @@
 
 (require 'url)
 (require 'cl-lib)
-(require 'request)
 
 (defgroup tldr nil
   "An Emacs client for the TLDR community man pages."
@@ -62,7 +61,7 @@ source."
   :type 'string)
 
 (defcustom tldr-source-zip-url
-  "https://github.com/tldr-pages/tldr/archive/master.zip"
+  "https://github.com/tldr-pages/tldr/archive/refs/heads/main.zip"
   "The location of the zipped TLDR source on GitHub."
   :group 'tldr
   :type 'string)
@@ -150,28 +149,14 @@ source."
       (progn
         (if (file-exists-p tldr-directory-path)
             (delete-directory tldr-directory-path 'recursive 'no-trash))
-        (tldr-request-data tldr-source-zip-url tldr-saved-zip-path)
+        (if (file-exists-p tldr-saved-zip-path)
+            (delete-file tldr-saved-zip-path 'no-trash))
+        (url-copy-file tldr-source-zip-url tldr-saved-zip-path)
         (shell-command-to-string (format "unzip -d %s %s" (file-truename user-emacs-directory) tldr-saved-zip-path))
         (delete-file tldr-saved-zip-path)
         (shell-command-to-string (format "mv '%s' '%s'" (concat (file-truename user-emacs-directory) "tldr-master") tldr-directory-path))
         (message "The TLDR docs are up to date!"))))
 
-(defun tldr-request-data (url file)
-  "Request data from URL and save file at the location of FILE."
-  (request
-   url
-   :parser 'buffer-string
-   :success
-   (cl-function (lambda (&key data &allow-other-keys)
-		  (when data
-		    (with-temp-buffer (get-buffer-create "*request data*")
-				      (erase-buffer)
-				      (insert data)
-				      (write-file file)
-				      (kill-buffer "*request data*")))))
-   :error
-   (cl-function (lambda (&rest args &key error-thrown &allow-other-keys)
-		  (message "Got error: %S" error-thrown)))))
 
 (defun tldr-get-commands-list ()
   "For `completing-read'"
