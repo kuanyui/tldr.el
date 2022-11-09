@@ -229,7 +229,7 @@ the default English language page."
                         (setq line (propertize (substring line 1 -1) 'face 'tldr-code-block))
                         ;; Add command face
                         (setq line (replace-regexp-in-string
-                                    (concat "^" command)
+                                    (concat "^" (regexp-quote command))
                                     (propertize command 'face 'tldr-command-itself)
                                     line 'fixedcase))
                         ;; Strip {{}} and add command argument face
