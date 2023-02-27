@@ -161,7 +161,11 @@ source."
         (url-copy-file tldr-source-zip-url tldr-saved-zip-path)
         (shell-command-to-string (format "unzip -d %s %s" (file-truename user-emacs-directory) tldr-saved-zip-path))
         (delete-file tldr-saved-zip-path)
-        (shell-command-to-string (format "mv '%s' '%s'" (concat (file-truename user-emacs-directory) "tldr-main") tldr-directory-path))
+	(if (member system-type '(windows-nt ms-dos))
+	    (shell-command-to-string (format "move \"%s\" \"%s\""
+					     (concat (file-truename user-emacs-directory) "tldr-main")
+					     (directory-file-name tldr-directory-path)))
+            (shell-command-to-string (format "mv '%s' '%s'" (concat (file-truename user-emacs-directory) "tldr-main") tldr-directory-path)))
         (message "The TLDR docs are up to date!"))))
 
 
